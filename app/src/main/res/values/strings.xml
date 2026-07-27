@@ -7,7 +7,7 @@
     <string name="greeting_morning">Good morning,</string>
     <string name="greeting_afternoon">Good afternoon,</string>
     <string name="greeting_evening">Good evening,</string>
-    <string name="home_my_cards">My cards</string>
+    <string name="home_my_accounts">My accounts</string>
     <string name="home_add_card">+ Add</string>
     <string name="account_balance">Account balance</string>
     <string name="balance_label_single">Balance on account:</string>
@@ -87,6 +87,25 @@
     <string name="account_type_savings">Savings</string>
     <string name="dialog_add_account_title">Add account</string>
     <string name="dialog_edit_account_title">Edit account</string>
+
+    <!-- Savings envelopes -->
+    <string name="savings_total_balance">Total balance</string>
+    <string name="savings_in_envelopes">In envelopes</string>
+    <string name="savings_unallocated">Unallocated</string>
+    <string name="savings_envelopes_title">Envelopes</string>
+    <string name="savings_add_envelope">+ Add</string>
+    <string name="savings_empty">No envelopes yet</string>
+    <string name="dialog_add_envelope_title">Add envelope</string>
+    <string name="dialog_edit_envelope_title">Edit envelope</string>
+    <string name="envelope_name_hint">Envelope name, e.g. Car</string>
+    <string name="envelope_goal_hint">Goal amount</string>
+    <string name="savings_deposit_title">Send money to %1$s</string>
+    <string name="savings_deposit_source_label">From account</string>
+    <string name="savings_deposit_amount_hint">Amount</string>
+    <string name="savings_deposit_action">Send</string>
+    <string name="error_envelope_name_required">Enter an envelope name</string>
+    <string name="error_amount_positive">Enter an amount greater than zero</string>
+    <string name="envelope_summary_format">%1$s in envelopes</string>
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
     <string name="action_duplicate">Duplicate</string>
@@ -118,6 +137,11 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System</string>
+    <string name="settings_home_screen">Home screen</string>
+    <string name="settings_home_show_balance">Balance</string>
+    <string name="settings_home_show_actions">Expense and income buttons</string>
+    <string name="settings_home_show_accounts">My accounts</string>
+    <string name="settings_home_show_transactions">Recent transactions</string>
     <string name="settings_hide_balance">Hide balances on Home</string>
     <string name="settings_color_code_transactions">Color-code income and expenses</string>
     <string name="settings_disable_animations">Disable animations (for older phones)</string>

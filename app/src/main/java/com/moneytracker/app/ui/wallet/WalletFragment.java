@@ -11,9 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.moneytracker.app.data.entity.Account;
+import com.moneytracker.app.data.relation.AccountWithBalance;
 import com.moneytracker.app.databinding.FragmentWalletBinding;
+import com.moneytracker.app.ui.alltransactions.AllTransactionsActivity;
+import com.moneytracker.app.ui.savings.SavingsEnvelopesActivity;
 import com.moneytracker.app.util.DisplayNameResolver;
 import com.moneytracker.app.util.ViewAnimations;
+
+import java.util.Collections;
 
 public class WalletFragment extends Fragment {
 
@@ -35,10 +41,23 @@ public class WalletFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(WalletViewModel.class);
         ViewAnimations.fadeInContent(view);
 
-        adapter = new AccountAdapter(item -> {
-            String resolvedName = DisplayNameResolver.resolve(requireContext(), item.account.getName());
-            AddEditAccountDialogFragment.newInstanceForEdit(item.account, resolvedName)
-                    .show(getChildFragmentManager(), "edit_account");
+        adapter = new AccountAdapter(new AccountAdapter.OnAccountClickListener() {
+            @Override
+            public void onAccountClick(AccountWithBalance item) {
+                if (Account.TYPE_SAVINGS.equals(item.account.getAccountType())) {
+                    startActivity(SavingsEnvelopesActivity.newIntent(requireContext(), item.account.getId()));
+                } else {
+                    startActivity(AllTransactionsActivity.newIntent(requireContext(),
+                            Collections.singletonList(item.account.getId())));
+                }
+            }
+
+            @Override
+            public void onAccountEditClick(AccountWithBalance item) {
+                String resolvedName = DisplayNameResolver.resolve(requireContext(), item.account.getName());
+                AddEditAccountDialogFragment.newInstanceForEdit(item.account, resolvedName)
+                        .show(getChildFragmentManager(), "edit_account");
+            }
         });
         binding.recyclerAccounts.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerAccounts.setAdapter(adapter);

@@ -13,10 +13,17 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <!-- Matches the add-account button's width so the title below sits truly
+             centered between two equal slots, regardless of translated text length. -->
+        <Space
+            android:layout_width="44dp"
+            android:layout_height="44dp" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/wallet_title"
             android:textColor="@color/text_primary"
             android:textSize="22sp"

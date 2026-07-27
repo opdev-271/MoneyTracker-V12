@@ -24,6 +24,7 @@ import com.moneytracker.app.data.relation.TransactionWithDetails;
 import com.moneytracker.app.databinding.FragmentHomeBinding;
 import com.moneytracker.app.ui.addtransaction.AddTransactionActivity;
 import com.moneytracker.app.ui.alltransactions.AllTransactionsActivity;
+import com.moneytracker.app.ui.savings.SavingsEnvelopesActivity;
 import com.moneytracker.app.ui.wallet.AddEditAccountDialogFragment;
 import com.moneytracker.app.ui.widget.OnTransactionInteractionListener;
 import com.moneytracker.app.ui.widget.TransactionSelectionController;
@@ -103,6 +104,10 @@ public class HomeFragment extends Fragment {
         binding.recyclerTransactions.setAdapter(adapter);
 
         accountCardAdapter = new AccountCardAdapter(item -> {
+            if (Account.TYPE_SAVINGS.equals(item.account.getAccountType())) {
+                startActivity(SavingsEnvelopesActivity.newIntent(requireContext(), item.account.getId()));
+                return;
+            }
             String resolvedName = DisplayNameResolver.resolve(requireContext(), item.account.getName());
             AddEditAccountDialogFragment.newInstanceForEdit(item.account, resolvedName)
                     .show(getChildFragmentManager(), "edit_account");
@@ -133,6 +138,32 @@ public class HomeFragment extends Fragment {
                 binding.btnAvatar, binding.btnAddAccountHome);
 
         observeViewModel();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Re-read every time this tab becomes visible, not just once at creation, since
+        // the user may have just come back from toggling these in Settings.
+        applyHomeSectionVisibility();
+    }
+
+    private void applyHomeSectionVisibility() {
+        if (binding == null) {
+            return;
+        }
+        binding.sectionBalance.setVisibility(
+                SettingsPrefs.isHomeSectionVisible(requireContext(), SettingsPrefs.HomeSection.BALANCE)
+                        ? View.VISIBLE : View.GONE);
+        binding.sectionActions.setVisibility(
+                SettingsPrefs.isHomeSectionVisible(requireContext(), SettingsPrefs.HomeSection.ACTIONS)
+                        ? View.VISIBLE : View.GONE);
+        binding.sectionAccounts.setVisibility(
+                SettingsPrefs.isHomeSectionVisible(requireContext(), SettingsPrefs.HomeSection.ACCOUNTS)
+                        ? View.VISIBLE : View.GONE);
+        binding.sheetTransactions.setVisibility(
+                SettingsPrefs.isHomeSectionVisible(requireContext(), SettingsPrefs.HomeSection.TRANSACTIONS)
+                        ? View.VISIBLE : View.GONE);
     }
 
     private int resolveGreeting() {

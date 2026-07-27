@@ -7,6 +7,7 @@ import com.moneytracker.app.data.AppDatabase;
 import com.moneytracker.app.data.repository.AccountRepository;
 import com.moneytracker.app.data.repository.CategoryRepository;
 import com.moneytracker.app.data.repository.ProfileRepository;
+import com.moneytracker.app.data.repository.SavingsEnvelopeRepository;
 import com.moneytracker.app.data.repository.TransactionRepository;
 import com.moneytracker.app.util.AppExecutors;
 import com.moneytracker.app.util.ExchangeRateFetcher;
@@ -24,6 +25,7 @@ public class MoneyTrackerApp extends Application {
     private CategoryRepository categoryRepository;
     private TransactionRepository transactionRepository;
     private ProfileRepository profileRepository;
+    private SavingsEnvelopeRepository savingsEnvelopeRepository;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -40,6 +42,7 @@ public class MoneyTrackerApp extends Application {
         categoryRepository = new CategoryRepository(database, executors);
         transactionRepository = new TransactionRepository(database, executors);
         profileRepository = new ProfileRepository(database, executors);
+        savingsEnvelopeRepository = new SavingsEnvelopeRepository(database, executors);
 
         executors.diskIO().execute(this::refreshExchangeRates);
     }
@@ -69,6 +72,10 @@ public class MoneyTrackerApp extends Application {
 
     public ProfileRepository getProfileRepository() {
         return profileRepository;
+    }
+
+    public SavingsEnvelopeRepository getSavingsEnvelopeRepository() {
+        return savingsEnvelopeRepository;
     }
 
     public static MoneyTrackerApp from(Context context) {

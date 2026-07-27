@@ -7,7 +7,7 @@
     <string name="greeting_morning">Guten Morgen,</string>
     <string name="greeting_afternoon">Guten Tag,</string>
     <string name="greeting_evening">Guten Abend,</string>
-    <string name="home_my_cards">Meine Karten</string>
+    <string name="home_my_accounts">Meine Konten</string>
     <string name="home_add_card">+ Hinzufügen</string>
     <string name="account_balance">Kontostand</string>
     <string name="balance_label_single">Kontostand:</string>
@@ -87,6 +87,25 @@
     <string name="account_type_savings">Sparen</string>
     <string name="dialog_add_account_title">Konto hinzufügen</string>
     <string name="dialog_edit_account_title">Konto bearbeiten</string>
+
+    <!-- Savings envelopes -->
+    <string name="savings_total_balance">Gesamtguthaben</string>
+    <string name="savings_in_envelopes">In Umschlägen</string>
+    <string name="savings_unallocated">Nicht zugewiesen</string>
+    <string name="savings_envelopes_title">Umschläge</string>
+    <string name="savings_add_envelope">+ Hinzufügen</string>
+    <string name="savings_empty">Noch keine Umschläge</string>
+    <string name="dialog_add_envelope_title">Umschlag hinzufügen</string>
+    <string name="dialog_edit_envelope_title">Umschlag bearbeiten</string>
+    <string name="envelope_name_hint">Name des Umschlags, z. B. Auto</string>
+    <string name="envelope_goal_hint">Zielbetrag</string>
+    <string name="savings_deposit_title">Geld senden an %1$s</string>
+    <string name="savings_deposit_source_label">Vom Konto</string>
+    <string name="savings_deposit_amount_hint">Betrag</string>
+    <string name="savings_deposit_action">Senden</string>
+    <string name="error_envelope_name_required">Namen des Umschlags eingeben</string>
+    <string name="error_amount_positive">Betrag größer als null eingeben</string>
+    <string name="envelope_summary_format">%1$s in Umschlägen</string>
     <string name="action_delete">Löschen</string>
     <string name="action_edit">Bearbeiten</string>
     <string name="action_duplicate">Duplizieren</string>
@@ -118,6 +137,11 @@
     <string name="theme_light">Hell</string>
     <string name="theme_dark">Dunkel</string>
     <string name="theme_system">System</string>
+    <string name="settings_home_screen">Startbildschirm</string>
+    <string name="settings_home_show_balance">Kontostand</string>
+    <string name="settings_home_show_actions">Ausgaben- und Einnahmen-Buttons</string>
+    <string name="settings_home_show_accounts">Meine Konten</string>
+    <string name="settings_home_show_transactions">Letzte Transaktionen</string>
     <string name="settings_hide_balance">Kontostände auf der Startseite ausblenden</string>
     <string name="settings_color_code_transactions">Einnahmen und Ausgaben farblich kennzeichnen</string>
     <string name="settings_disable_animations">Animationen deaktivieren (für ältere Telefone)</string>

@@ -109,11 +109,23 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <!-- Period label: today's date / week range / "Month Year" / year, per selected period -->
+        <TextView
+            android:id="@+id/text_period_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Červenec 2026" />
+
         <!-- Cash-flow line chart -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_m"
+            android:layout_marginTop="@dimen/spacing_s"
             android:background="@drawable/bg_card_white"
             android:elevation="2dp"
             android:padding="12dp">

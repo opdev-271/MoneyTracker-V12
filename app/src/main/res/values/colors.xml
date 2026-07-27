@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#EEF0E8</color>
+    <!-- Deliberately identical to surface: the whole app reads as one flat white
+         page, with cards/sheets separated only by a hairline stroke or a drop
+         shadow, never by a second background tone. -->
+    <color name="background">#FFFFFFFF</color>
     <color name="surface">#FFFFFFFF</color>
     <color name="surface_variant">#F0F2E9</color>
     <color name="surface_variant_dark">#E2E5D8</color>
@@ -35,6 +38,14 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="divider">#E4E7DA</color>
+
+    <!-- Chart scrub tooltip: intentionally the same fixed bubble color in both themes
+         (not sourced from surface/background) so accent/accent_coral text inside it
+         always has reliable contrast. Deliberately lighter than the dark theme's own
+         surface (#1F221D, now identical to background) so the bubble stays visible
+         there instead of disappearing into the chart card behind it. -->
+    <color name="tooltip_background">#3A3D34</color>
+    <color name="tooltip_text">#F4F6EE</color>
 
     <!-- Text/icons sitting on an accent(lime)-filled surface. The lime is light
          in both themes, so these stay dark and do NOT flip. -->

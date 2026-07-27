@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#141613</color>
+    <!-- Deliberately identical to surface: the whole app reads as one flat dark
+         page, with cards/sheets separated only by a hairline stroke or a drop
+         shadow, never by a second background tone. -->
+    <color name="background">#1F221D</color>
     <color name="surface">#1F221D</color>
     <color name="surface_variant">#2B2E27</color>
     <color name="surface_variant_dark">#363A32</color>
@@ -27,7 +30,10 @@
 
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="divider">#2C2F28</color>
+    <!-- Now doing real work as the card/sheet/pill outline against an identical
+         surface/background fill, not just a list-row hairline, so it needs to read
+         clearly lighter than that fill rather than barely-there. -->
+    <color name="divider">#3C4038</color>
 
     <!-- Lime stays light in dark mode too, so on-accent content stays dark. -->
     <color name="on_accent_text">#181A12</color>

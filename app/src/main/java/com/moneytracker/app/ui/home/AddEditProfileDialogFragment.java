@@ -1,6 +1,5 @@
 package com.moneytracker.app.ui.home;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,14 +11,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.moneytracker.app.MoneyTrackerApp;
 import com.moneytracker.app.R;
 import com.moneytracker.app.data.entity.Profile;
 import com.moneytracker.app.data.repository.ProfileRepository;
+import com.moneytracker.app.ui.widget.DialogButtonStyler;
 import com.moneytracker.app.ui.widget.IconGridAdapter;
 import com.moneytracker.app.util.ProfileIcons;
 
@@ -54,18 +56,21 @@ public class AddEditProfileDialogFragment extends DialogFragment {
         recyclerAvatar.setLayoutManager(new GridLayoutManager(requireContext(), 4));
         recyclerAvatar.setAdapter(avatarAdapter);
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_MoneyTracker_Dialog)
                 .setTitle(R.string.add_profile_title)
                 .setView(view)
                 .setPositiveButton(R.string.button_save, null)
                 .setNegativeButton(R.string.action_cancel, (d, which) -> dismiss())
                 .create();
-        dialog.setOnShowListener((DialogInterface.OnShowListener) d ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    if (trySave()) {
-                        dismiss();
-                    }
-                }));
+        dialog.setOnShowListener((DialogInterface.OnShowListener) d -> {
+            DialogButtonStyler.style(dialog);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (trySave()) {
+                    dismiss();
+                }
+            });
+        });
         return dialog;
     }
 

@@ -4,6 +4,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.moneytracker.app.R;
+import com.moneytracker.app.data.entity.Account;
 import com.moneytracker.app.data.relation.AccountWithBalance;
 import com.moneytracker.app.ui.widget.ColorSwatchRow;
 import com.moneytracker.app.util.AccountIcons;
@@ -25,7 +27,11 @@ import com.moneytracker.app.util.ViewAnimations;
 public class AccountAdapter extends ListAdapter<AccountWithBalance, AccountAdapter.ViewHolder> {
 
     public interface OnAccountClickListener {
+        /** Row tap: drills into that account's own transactions (same concept as "All transactions"). */
         void onAccountClick(AccountWithBalance item);
+
+        /** Pencil icon tap: opens the add/edit account dialog. */
+        void onAccountEditClick(AccountWithBalance item);
     }
 
     private final OnAccountClickListener listener;
@@ -54,6 +60,8 @@ public class AccountAdapter extends ListAdapter<AccountWithBalance, AccountAdapt
         private final TextView textName;
         private final TextView textCurrency;
         private final TextView textBalance;
+        private final TextView textEnveloped;
+        private final ImageButton btnEdit;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,7 +69,9 @@ public class AccountAdapter extends ListAdapter<AccountWithBalance, AccountAdapt
             textName = itemView.findViewById(R.id.text_name);
             textCurrency = itemView.findViewById(R.id.text_currency);
             textBalance = itemView.findViewById(R.id.text_balance);
-            ViewAnimations.addPressFeedback(itemView);
+            textEnveloped = itemView.findViewById(R.id.text_enveloped);
+            btnEdit = itemView.findViewById(R.id.btn_edit_account);
+            ViewAnimations.addPressFeedback(itemView, btnEdit);
         }
 
         void bind(AccountWithBalance item, OnAccountClickListener listener) {
@@ -79,8 +89,18 @@ public class AccountAdapter extends ListAdapter<AccountWithBalance, AccountAdapt
             textBalance.setTextColor(onCard);
             imageAccountType.setImageResource(AccountIcons.resolve(item.account.getAccountType()));
             imageAccountType.setColorFilter(onCard);
+            btnEdit.setColorFilter(onCardMuted);
+
+            boolean showEnveloped = Account.TYPE_SAVINGS.equals(item.account.getAccountType()) && item.envelopedTotal > 0;
+            if (showEnveloped) {
+                textEnveloped.setText(itemView.getContext().getString(R.string.envelope_summary_format,
+                        CurrencyFormatter.format(item.envelopedTotal, item.account.getCurrencyCode())));
+                textEnveloped.setTextColor(onCardMuted);
+            }
+            textEnveloped.setVisibility(showEnveloped ? View.VISIBLE : View.GONE);
 
             itemView.setOnClickListener(v -> listener.onAccountClick(item));
+            btnEdit.setOnClickListener(v -> listener.onAccountEditClick(item));
         }
     }
 
@@ -97,7 +117,8 @@ public class AccountAdapter extends ListAdapter<AccountWithBalance, AccountAdapt
                             && oldItem.account.getCurrencyCode().equals(newItem.account.getCurrencyCode())
                             && oldItem.account.getAccountType().equals(newItem.account.getAccountType())
                             && oldItem.account.getColor() == newItem.account.getColor()
-                            && oldItem.balance == newItem.balance;
+                            && oldItem.balance == newItem.balance
+                            && oldItem.envelopedTotal == newItem.envelopedTotal;
                 }
             };
 }

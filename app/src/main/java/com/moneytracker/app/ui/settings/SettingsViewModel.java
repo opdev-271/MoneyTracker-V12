@@ -18,6 +18,10 @@ public class SettingsViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> colorCodeTransactions;
     private final MutableLiveData<Boolean> animationsEnabled;
     private final MutableLiveData<String> theme;
+    private final MutableLiveData<Boolean> homeShowBalance;
+    private final MutableLiveData<Boolean> homeShowActions;
+    private final MutableLiveData<Boolean> homeShowAccounts;
+    private final MutableLiveData<Boolean> homeShowTransactions;
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
@@ -26,6 +30,14 @@ public class SettingsViewModel extends AndroidViewModel {
         colorCodeTransactions = new MutableLiveData<>(SettingsPrefs.isColorCodeTransactions(application));
         animationsEnabled = new MutableLiveData<>(SettingsPrefs.isAnimationsEnabled(application));
         theme = new MutableLiveData<>(ThemePrefs.getThemeMode(application));
+        homeShowBalance = new MutableLiveData<>(
+                SettingsPrefs.isHomeSectionVisible(application, SettingsPrefs.HomeSection.BALANCE));
+        homeShowActions = new MutableLiveData<>(
+                SettingsPrefs.isHomeSectionVisible(application, SettingsPrefs.HomeSection.ACTIONS));
+        homeShowAccounts = new MutableLiveData<>(
+                SettingsPrefs.isHomeSectionVisible(application, SettingsPrefs.HomeSection.ACCOUNTS));
+        homeShowTransactions = new MutableLiveData<>(
+                SettingsPrefs.isHomeSectionVisible(application, SettingsPrefs.HomeSection.TRANSACTIONS));
     }
 
     public LiveData<String> getLanguage() {
@@ -79,5 +91,41 @@ public class SettingsViewModel extends AndroidViewModel {
     public void setAnimationsEnabled(boolean enabled) {
         SettingsPrefs.setAnimationsEnabled(getApplication(), enabled);
         animationsEnabled.setValue(enabled);
+    }
+
+    public LiveData<Boolean> getHomeShowBalance() {
+        return homeShowBalance;
+    }
+
+    public void setHomeShowBalance(boolean visible) {
+        SettingsPrefs.setHomeSectionVisible(getApplication(), SettingsPrefs.HomeSection.BALANCE, visible);
+        homeShowBalance.setValue(visible);
+    }
+
+    public LiveData<Boolean> getHomeShowActions() {
+        return homeShowActions;
+    }
+
+    public void setHomeShowActions(boolean visible) {
+        SettingsPrefs.setHomeSectionVisible(getApplication(), SettingsPrefs.HomeSection.ACTIONS, visible);
+        homeShowActions.setValue(visible);
+    }
+
+    public LiveData<Boolean> getHomeShowAccounts() {
+        return homeShowAccounts;
+    }
+
+    public void setHomeShowAccounts(boolean visible) {
+        SettingsPrefs.setHomeSectionVisible(getApplication(), SettingsPrefs.HomeSection.ACCOUNTS, visible);
+        homeShowAccounts.setValue(visible);
+    }
+
+    public LiveData<Boolean> getHomeShowTransactions() {
+        return homeShowTransactions;
+    }
+
+    public void setHomeShowTransactions(boolean visible) {
+        SettingsPrefs.setHomeSectionVisible(getApplication(), SettingsPrefs.HomeSection.TRANSACTIONS, visible);
+        homeShowTransactions.setValue(visible);
     }
 }

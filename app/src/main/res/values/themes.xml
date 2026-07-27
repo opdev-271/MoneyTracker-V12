@@ -28,4 +28,34 @@
     <style name="TextAppearance.MoneyTracker.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
         <item name="android:textColor">@color/text_primary</item>
     </style>
+
+    <!-- Every DialogFragment in the app builds its dialog with this overlay (via
+         MaterialAlertDialogBuilder) instead of the bare platform AlertDialog, so
+         add/edit sheets share the same rounded, app-colored look as the rest of the
+         app rather than the default grey system dialog. -->
+    <style name="ThemeOverlay.MoneyTracker.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!-- Material's dark-theme elevation overlay lightens colorSurface proportionally
+             to the view's elevation, and dialogs sit at a high default elevation - without
+             this, the dialog would render as a washed-out grey instead of the app's own
+             near-black surface color. -->
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MoneyTracker.Dialog</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/accent_on_surface</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.MoneyTracker.Dialog.Title</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorControlNormal">@color/text_tertiary</item>
+        <item name="colorControlActivated">@color/accent_on_surface</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MoneyTracker.Dialog" parent="">
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="TextAppearance.MoneyTracker.Dialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

@@ -72,6 +72,14 @@ public class SettingsFragment extends Fragment {
                 viewModel.setColorCodeTransactions(binding.switchColorCodeTransactions.isChecked()));
         binding.switchDisableAnimations.setOnClickListener(v ->
                 viewModel.setAnimationsEnabled(!binding.switchDisableAnimations.isChecked()));
+        binding.switchHomeShowBalance.setOnClickListener(v ->
+                viewModel.setHomeShowBalance(binding.switchHomeShowBalance.isChecked()));
+        binding.switchHomeShowActions.setOnClickListener(v ->
+                viewModel.setHomeShowActions(binding.switchHomeShowActions.isChecked()));
+        binding.switchHomeShowAccounts.setOnClickListener(v ->
+                viewModel.setHomeShowAccounts(binding.switchHomeShowAccounts.isChecked()));
+        binding.switchHomeShowTransactions.setOnClickListener(v ->
+                viewModel.setHomeShowTransactions(binding.switchHomeShowTransactions.isChecked()));
 
         viewModel.getLanguage().observe(getViewLifecycleOwner(), language ->
                 languageToggle.setSelectedIndex(indexForLanguage(language)));
@@ -83,6 +91,14 @@ public class SettingsFragment extends Fragment {
                 binding.switchColorCodeTransactions.setChecked(Boolean.TRUE.equals(enabled)));
         viewModel.getAnimationsEnabled().observe(getViewLifecycleOwner(), enabled ->
                 binding.switchDisableAnimations.setChecked(!Boolean.TRUE.equals(enabled)));
+        viewModel.getHomeShowBalance().observe(getViewLifecycleOwner(), visible ->
+                binding.switchHomeShowBalance.setChecked(Boolean.TRUE.equals(visible)));
+        viewModel.getHomeShowActions().observe(getViewLifecycleOwner(), visible ->
+                binding.switchHomeShowActions.setChecked(Boolean.TRUE.equals(visible)));
+        viewModel.getHomeShowAccounts().observe(getViewLifecycleOwner(), visible ->
+                binding.switchHomeShowAccounts.setChecked(Boolean.TRUE.equals(visible)));
+        viewModel.getHomeShowTransactions().observe(getViewLifecycleOwner(), visible ->
+                binding.switchHomeShowTransactions.setChecked(Boolean.TRUE.equals(visible)));
     }
 
     private void changeLanguage(String language) {

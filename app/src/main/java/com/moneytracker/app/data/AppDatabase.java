@@ -12,18 +12,20 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.moneytracker.app.data.dao.AccountDao;
 import com.moneytracker.app.data.dao.CategoryDao;
 import com.moneytracker.app.data.dao.ProfileDao;
+import com.moneytracker.app.data.dao.SavingsEnvelopeDao;
 import com.moneytracker.app.data.dao.TransactionDao;
 import com.moneytracker.app.data.entity.Account;
 import com.moneytracker.app.data.entity.Category;
 import com.moneytracker.app.data.entity.Profile;
+import com.moneytracker.app.data.entity.SavingsEnvelope;
 import com.moneytracker.app.data.entity.Transaction;
 import com.moneytracker.app.util.AppExecutors;
 
 import java.util.Arrays;
 
 @Database(
-        entities = {Account.class, Category.class, Transaction.class, Profile.class},
-        version = 4,
+        entities = {Account.class, Category.class, Transaction.class, Profile.class, SavingsEnvelope.class},
+        version = 5,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -38,6 +40,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TransactionDao transactionDao();
 
     public abstract ProfileDao profileDao();
+
+    public abstract SavingsEnvelopeDao savingsEnvelopeDao();
 
     public static AppDatabase getInstance(@NonNull Context context) {
         if (instance == null) {

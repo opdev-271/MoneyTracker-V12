@@ -1,6 +1,5 @@
 package com.moneytracker.app.ui.addtransaction;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -13,11 +12,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.moneytracker.app.R;
 import com.moneytracker.app.data.entity.Category;
+import com.moneytracker.app.ui.widget.DialogButtonStyler;
 import com.moneytracker.app.util.CategoryIcons;
 import com.moneytracker.app.util.DisplayNameResolver;
 
@@ -57,11 +59,14 @@ public class CategoryPickerDialogFragment extends DialogFragment {
         viewModel.getCategories().observe(this, categories ->
                 renderRows(categories != null ? categories : new ArrayList<>()));
 
-        return new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_MoneyTracker_Dialog)
                 .setTitle(R.string.label_category)
                 .setView(view)
-                .setNegativeButton(R.string.action_cancel, (dialog, which) -> dismiss())
+                .setNegativeButton(R.string.action_cancel, (d, which) -> dismiss())
                 .create();
+        dialog.setOnShowListener(d -> DialogButtonStyler.style(dialog));
+        return dialog;
     }
 
     private void renderRows(List<Category> categories) {

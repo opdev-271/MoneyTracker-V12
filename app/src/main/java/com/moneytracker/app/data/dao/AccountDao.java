@@ -48,7 +48,8 @@ public interface AccountDao {
     LiveData<Double> getAccountBalance(long accountId);
 
     @Query("SELECT a.*, (a.initial_balance + IFNULL((SELECT SUM(CASE WHEN t.type = 'EXPENSE' THEN -t.amount ELSE t.amount END) " +
-            "FROM transactions t WHERE t.account_id = a.id), 0)) AS balance " +
+            "FROM transactions t WHERE t.account_id = a.id), 0)) AS balance, " +
+            "IFNULL((SELECT SUM(se.current_amount) FROM savings_envelopes se WHERE se.account_id = a.id), 0) AS envelopedTotal " +
             "FROM accounts a WHERE a.profile_id = :profileId ORDER BY a.sort_order ASC, a.id ASC")
     LiveData<List<AccountWithBalance>> getAccountsWithBalanceForProfile(long profileId);
 }

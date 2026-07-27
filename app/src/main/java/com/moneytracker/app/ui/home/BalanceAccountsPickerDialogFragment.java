@@ -1,6 +1,5 @@
 package com.moneytracker.app.ui.home;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -12,12 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.moneytracker.app.R;
 import com.moneytracker.app.data.entity.Account;
 import com.moneytracker.app.ui.widget.ColorSwatchRow;
+import com.moneytracker.app.ui.widget.DialogButtonStyler;
 import com.moneytracker.app.util.DisplayNameResolver;
 
 import java.util.ArrayList;
@@ -57,12 +59,15 @@ public class BalanceAccountsPickerDialogFragment extends DialogFragment {
         Set<Long> selectedIds = viewModel.getSelectedAccountIds().getValue();
         renderRows(accounts != null ? accounts : new ArrayList<>(), selectedIds);
 
-        return new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_MoneyTracker_Dialog)
                 .setTitle(R.string.balance_accounts_picker_title)
                 .setView(view)
-                .setPositiveButton(R.string.button_save, (dialog, which) -> saveSelection())
-                .setNegativeButton(R.string.action_cancel, (dialog, which) -> dismiss())
+                .setPositiveButton(R.string.button_save, (d, which) -> saveSelection())
+                .setNegativeButton(R.string.action_cancel, (d, which) -> dismiss())
                 .create();
+        dialog.setOnShowListener(d -> DialogButtonStyler.style(dialog));
+        return dialog;
     }
 
     private void renderRows(List<Account> accounts, Set<Long> selectedIds) {

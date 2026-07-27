@@ -53,6 +53,7 @@ public class AnalyticsFragment extends Fragment {
 
     private Double currentExpense;
     private Double previousExpense;
+    private ChartMarkerView markerView;
 
     @Nullable
     @Override
@@ -91,6 +92,7 @@ public class AnalyticsFragment extends Fragment {
         });
         viewModel.getCategoryTotals().observe(getViewLifecycleOwner(), this::renderChart);
         viewModel.getPeriodTransactions().observe(getViewLifecycleOwner(), this::renderLineChart);
+        viewModel.getDateRange().observe(getViewLifecycleOwner(), range -> updatePeriodLabel(viewModel.getPeriod().getValue(), range));
 
         viewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> renderAccountFilter(accounts != null ? accounts : new ArrayList<>()));
         viewModel.getSelectedAccountId().observe(getViewLifecycleOwner(), id -> updateAccountFilterSelection());
@@ -176,13 +178,65 @@ public class AnalyticsFragment extends Fragment {
         chip.setBackground(drawable);
     }
 
+    /**
+     * Label shown above the chart, describing the currently selected period using the
+     * device's own date/time and locale: today's date for Day, a from-to range for Week,
+     * "Month Year" for Month, and just the year for Year.
+     */
+    private void updatePeriodLabel(AnalyticsViewModel.Period period, long[] range) {
+        if (period == null || range == null || binding == null) {
+            return;
+        }
+        Locale locale = Locale.getDefault();
+        String label;
+        switch (period) {
+            case DAY: {
+                java.text.DateFormat dayFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG, locale);
+                label = dayFormat.format(new Date(range[0]));
+                break;
+            }
+            case WEEK: {
+                SimpleDateFormat shortFormat = new SimpleDateFormat("d. M.", locale);
+                SimpleDateFormat endFormat = new SimpleDateFormat("d. M. yyyy", locale);
+                label = shortFormat.format(new Date(range[0])) + " – " + endFormat.format(new Date(range[1]));
+                break;
+            }
+            case YEAR: {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(range[0]);
+                label = String.valueOf(calendar.get(Calendar.YEAR));
+                break;
+            }
+            case MONTH:
+            default: {
+                SimpleDateFormat monthFormat = new SimpleDateFormat("LLLL yyyy", locale);
+                String formatted = monthFormat.format(new Date(range[0]));
+                label = formatted.isEmpty() ? formatted
+                        : Character.toUpperCase(formatted.charAt(0)) + formatted.substring(1);
+                break;
+            }
+        }
+        binding.textPeriodLabel.setText(label);
+    }
+
     private void setupLineChart() {
         binding.lineChart.getDescription().setEnabled(false);
         binding.lineChart.getLegend().setEnabled(false);
-        binding.lineChart.setTouchEnabled(false);
+        // Touch stays on, but only to scrub the marker/highlight in place - panning and
+        // pinch/double-tap zoom are all off since this is a small embedded overview chart.
+        binding.lineChart.setTouchEnabled(true);
+        binding.lineChart.setHighlightPerDragEnabled(true);
+        binding.lineChart.setHighlightPerTapEnabled(true);
+        binding.lineChart.setDragEnabled(false);
+        binding.lineChart.setScaleEnabled(false);
+        binding.lineChart.setPinchZoom(false);
+        binding.lineChart.setDoubleTapToZoomEnabled(false);
         binding.lineChart.getAxisLeft().setEnabled(false);
         binding.lineChart.getAxisRight().setEnabled(false);
         binding.lineChart.setExtraBottomOffset(6f);
+        markerView = new ChartMarkerView(requireContext());
+        markerView.setChartView(binding.lineChart);
+        binding.lineChart.setMarker(markerView);
         XAxis xAxis = binding.lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
@@ -262,13 +316,17 @@ public class AnalyticsFragment extends Fragment {
                 buildLineDataSet(incomeEntries, requireContext().getColor(R.color.accent_on_surface)),
                 buildLineDataSet(expenseEntries, requireContext().getColor(R.color.accent_coral)));
 
+        String[] bucketLabels = buildBucketLabels(period, range, bucketCount);
         XAxis xAxis = binding.lineChart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(buildBucketLabels(period, range, bucketCount)));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(bucketLabels));
         xAxis.setLabelCount(Math.min(bucketCount, period == AnalyticsViewModel.Period.MONTH ? 6 : bucketCount));
+        markerView.setSeries(income, expense, bucketLabels);
 
         binding.lineChart.setData(lineData);
         if (SettingsPrefs.isAnimationsEnabled(requireContext())) {
-            binding.lineChart.animateX(700, Easing.EaseOutCirc);
+            // Slower and eased in both axes at once for a calmer, more premium reveal
+            // than the previous quick single-axis animation.
+            binding.lineChart.animateXY(1100, 1400, Easing.EaseInOutCubic, Easing.EaseOutCubic);
         }
         binding.lineChart.invalidate();
     }

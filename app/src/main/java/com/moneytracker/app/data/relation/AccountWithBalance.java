@@ -11,4 +11,7 @@ public class AccountWithBalance {
     public Account account;
 
     public double balance;
+
+    /** Sum of all this account's savings envelopes' currentAmount; 0 for non-savings accounts. */
+    public double envelopedTotal;
 }

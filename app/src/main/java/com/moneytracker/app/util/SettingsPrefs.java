@@ -20,6 +20,10 @@ public class SettingsPrefs {
     private static final String KEY_ANIMATIONS_ENABLED = "animations_enabled";
     private static final String KEY_BALANCE_ACCOUNTS_PREFIX = "balance_accounts_";
     private static final String BALANCE_ACCOUNTS_ALL = "ALL";
+    private static final String KEY_HOME_SHOW_BALANCE = "home_show_balance";
+    private static final String KEY_HOME_SHOW_ACTIONS = "home_show_actions";
+    private static final String KEY_HOME_SHOW_ACCOUNTS = "home_show_accounts";
+    private static final String KEY_HOME_SHOW_TRANSACTIONS = "home_show_transactions";
 
     /** The id of the very first profile ever created (see OnboardingActivity). */
     public static final long DEFAULT_PROFILE_ID = 1L;
@@ -100,6 +104,27 @@ public class SettingsPrefs {
             value = TextUtils.join(",", parts);
         }
         prefs(context).edit().putString(KEY_BALANCE_ACCOUNTS_PREFIX + profileId, value).apply();
+    }
+
+    public static boolean isHomeSectionVisible(Context context, HomeSection section) {
+        return prefs(context).getBoolean(section.prefKey, true);
+    }
+
+    public static void setHomeSectionVisible(Context context, HomeSection section, boolean visible) {
+        prefs(context).edit().putBoolean(section.prefKey, visible).apply();
+    }
+
+    public enum HomeSection {
+        BALANCE(KEY_HOME_SHOW_BALANCE),
+        ACTIONS(KEY_HOME_SHOW_ACTIONS),
+        ACCOUNTS(KEY_HOME_SHOW_ACCOUNTS),
+        TRANSACTIONS(KEY_HOME_SHOW_TRANSACTIONS);
+
+        private final String prefKey;
+
+        HomeSection(String prefKey) {
+            this.prefKey = prefKey;
+        }
     }
 
     private static SharedPreferences prefs(Context context) {

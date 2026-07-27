@@ -1,6 +1,5 @@
 package com.moneytracker.app.ui.wallet;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,12 +15,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.moneytracker.app.R;
 import com.moneytracker.app.data.entity.Account;
 import com.moneytracker.app.ui.widget.ColorSwatchRow;
+import com.moneytracker.app.ui.widget.DialogButtonStyler;
 import com.moneytracker.app.ui.widget.SegmentedToggle;
 import com.moneytracker.app.util.OnboardingPrefs;
 import com.moneytracker.app.util.SettingsPrefs;
@@ -124,7 +126,8 @@ public class AddEditAccountDialogFragment extends DialogFragment {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_MoneyTracker_Dialog)
                 .setTitle(isEdit ? R.string.dialog_edit_account_title : R.string.dialog_add_account_title)
                 .setView(view)
                 .setPositiveButton(R.string.button_save, null)
@@ -138,12 +141,14 @@ public class AddEditAccountDialogFragment extends DialogFragment {
         }
 
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener((DialogInterface.OnShowListener) d ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    if (trySave(accountId)) {
-                        dismiss();
-                    }
-                }));
+        dialog.setOnShowListener((DialogInterface.OnShowListener) d -> {
+            DialogButtonStyler.style(dialog);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (trySave(accountId)) {
+                    dismiss();
+                }
+            });
+        });
         return dialog;
     }
 

@@ -7,7 +7,7 @@
     <string name="greeting_morning">Dobré ráno,</string>
     <string name="greeting_afternoon">Dobré odpoledne,</string>
     <string name="greeting_evening">Dobrý večer,</string>
-    <string name="home_my_cards">Moje karty</string>
+    <string name="home_my_accounts">Moje účty</string>
     <string name="home_add_card">+ Přidat</string>
     <string name="account_balance">Zůstatek účtu</string>
     <string name="balance_label_single">Zůstatek na účtu:</string>
@@ -87,6 +87,25 @@
     <string name="account_type_savings">Spoření</string>
     <string name="dialog_add_account_title">Přidat účet</string>
     <string name="dialog_edit_account_title">Upravit účet</string>
+
+    <!-- Savings envelopes -->
+    <string name="savings_total_balance">Celkový zůstatek</string>
+    <string name="savings_in_envelopes">V obálkách</string>
+    <string name="savings_unallocated">Nerozděleno</string>
+    <string name="savings_envelopes_title">Obálky</string>
+    <string name="savings_add_envelope">+ Přidat</string>
+    <string name="savings_empty">Zatím žádné obálky</string>
+    <string name="dialog_add_envelope_title">Přidat obálku</string>
+    <string name="dialog_edit_envelope_title">Upravit obálku</string>
+    <string name="envelope_name_hint">Název obálky, např. Auto</string>
+    <string name="envelope_goal_hint">Peněžní cíl</string>
+    <string name="savings_deposit_title">Poslat peníze do %1$s</string>
+    <string name="savings_deposit_source_label">Z účtu</string>
+    <string name="savings_deposit_amount_hint">Částka</string>
+    <string name="savings_deposit_action">Poslat</string>
+    <string name="error_envelope_name_required">Zadejte název obálky</string>
+    <string name="error_amount_positive">Zadejte částku větší než nula</string>
+    <string name="envelope_summary_format">%1$s v obálkách</string>
     <string name="action_delete">Smazat</string>
     <string name="action_edit">Upravit</string>
     <string name="action_duplicate">Duplikovat</string>
@@ -118,6 +137,11 @@
     <string name="theme_light">Světlý</string>
     <string name="theme_dark">Tmavý</string>
     <string name="theme_system">Podle systému</string>
+    <string name="settings_home_screen">Domovská obrazovka</string>
+    <string name="settings_home_show_balance">Zůstatek</string>
+    <string name="settings_home_show_actions">Tlačítka výdaj a příjem</string>
+    <string name="settings_home_show_accounts">Moje účty</string>
+    <string name="settings_home_show_transactions">Nedávné transakce</string>
     <string name="settings_hide_balance">Skrýt zůstatky na hlavní obrazovce</string>
     <string name="settings_color_code_transactions">Barevně rozlišovat příjmy a výdaje</string>
     <string name="settings_disable_animations">Vypnout animace (pro starší telefony)</string>
