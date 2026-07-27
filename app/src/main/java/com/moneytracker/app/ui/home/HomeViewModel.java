@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    private static final int RECENT_TRANSACTIONS_LIMIT = 6;
+    private static final int RECENT_TRANSACTIONS_LIMIT = 3;
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;

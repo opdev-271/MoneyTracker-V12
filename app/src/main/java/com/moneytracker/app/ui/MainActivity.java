@@ -2,7 +2,13 @@ package com.moneytracker.app.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -17,8 +23,11 @@ import com.moneytracker.app.ui.addtransaction.AddTransactionActivity;
 import com.moneytracker.app.ui.onboarding.OnboardingActivity;
 import com.moneytracker.app.util.LocaleHelper;
 import com.moneytracker.app.util.OnboardingPrefs;
+import com.moneytracker.app.util.SettingsPrefs;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView bottomNavigation;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -42,10 +51,65 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(navHost.getId());
         NavController navController = navHostFragment.getNavController();
 
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigation, navController);
+        // Overrides the item listener setupWithNavController installed, but keeps its
+        // destination-changed listener (installed separately), so the checked state
+        // still tracks navigation. This just adds the per-tab icon animation on top.
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+            if (handled) {
+                animateNavIcon(item.getItemId());
+            }
+            return handled;
+        });
+        bottomNavigation.setOnItemReselectedListener(item -> animateNavIcon(item.getItemId()));
 
         findViewById(R.id.btn_quick_add).setOnClickListener(v ->
                 startActivity(AddTransactionActivity.newIntent(this, Category.TYPE_EXPENSE, -1L)));
+    }
+
+    /** Per-tab tap animation: home/wallet icons hop; analytics bars wave and the
+     * settings gear spins via their AnimatedVectorDrawable menu icons. */
+    private void animateNavIcon(int itemId) {
+        if (!SettingsPrefs.isAnimationsEnabled(this)) {
+            return;
+        }
+        View itemView = bottomNavigation.findViewById(itemId);
+        if (itemView == null) {
+            return;
+        }
+        ImageView iconView = findFirstImageView(itemView);
+        if (itemId == R.id.analyticsFragment || itemId == R.id.settingsFragment) {
+            Drawable icon = iconView != null ? iconView.getDrawable() : null;
+            if (icon instanceof Animatable) {
+                ((Animatable) icon).start();
+                return;
+            }
+        }
+        View target = iconView != null ? iconView : itemView;
+        float hop = -6f * getResources().getDisplayMetrics().density;
+        target.animate().translationY(hop).setDuration(160)
+                .withEndAction(() -> target.animate().translationY(0f).setDuration(320)
+                        .setInterpolator(new OvershootInterpolator(2.5f)).start())
+                .start();
+    }
+
+    /** Depth-first search for the item's icon ImageView, avoiding any dependence on
+     * Material's internal view ids; returns null if the structure ever changes. */
+    private static ImageView findFirstImageView(View root) {
+        if (root instanceof ImageView) {
+            return (ImageView) root;
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                ImageView found = findFirstImageView(group.getChildAt(i));
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 }

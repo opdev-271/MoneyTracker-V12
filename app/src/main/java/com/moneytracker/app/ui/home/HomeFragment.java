@@ -1,13 +1,14 @@
 package com.moneytracker.app.ui.home;
 
 import android.animation.ValueAnimator;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -215,7 +216,7 @@ public class HomeFragment extends Fragment {
                     balanceAnimator.cancel();
                 }
                 displayedBalance = Double.NaN;
-                binding.textBalance.setText(HIDDEN_BALANCE_TEXT);
+                ViewAnimations.animateTextMasking(binding.textBalance, HIDDEN_BALANCE_TEXT);
             } else {
                 animateBalanceTo(latestBalance);
             }
@@ -227,6 +228,10 @@ public class HomeFragment extends Fragment {
             boolean empty = latestTransactions.isEmpty();
             binding.textEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
             binding.recyclerTransactions.setVisibility(empty ? View.GONE : View.VISIBLE);
+            // Empty sheet reads as a closed rounded card; a populated one runs off the
+            // bottom of the screen with no closing line.
+            binding.sheetTransactions.setBackgroundResource(
+                    empty ? R.drawable.bg_sheet_closed : R.drawable.bg_sheet);
         });
     }
 
@@ -297,20 +302,18 @@ public class HomeFragment extends Fragment {
         balanceAnimator.start();
     }
 
+    /** Animated strikethrough: the slash draws itself across the eye when hiding and
+     * erases back out when showing, instead of a plain icon swap. */
     private void animateEyeIconSwap(boolean hidden) {
         if (!SettingsPrefs.isAnimationsEnabled(requireContext())) {
             binding.btnToggleBalance.setImageResource(hidden ? R.drawable.ic_eye_off : R.drawable.ic_eye);
             return;
         }
-        binding.btnToggleBalance.animate().scaleX(0f).scaleY(0f).setDuration(120)
-                .withEndAction(() -> {
-                    if (binding == null) {
-                        return;
-                    }
-                    binding.btnToggleBalance.setImageResource(hidden ? R.drawable.ic_eye_off : R.drawable.ic_eye);
-                    binding.btnToggleBalance.animate().scaleX(1f).scaleY(1f).setDuration(180)
-                            .setInterpolator(new OvershootInterpolator(2.2f)).start();
-                }).start();
+        binding.btnToggleBalance.setImageResource(hidden ? R.drawable.avd_eye_hide : R.drawable.avd_eye_show);
+        Drawable icon = binding.btnToggleBalance.getDrawable();
+        if (icon instanceof Animatable) {
+            ((Animatable) icon).start();
+        }
     }
 
     private void openAddTransaction(String type) {

@@ -39,6 +39,7 @@ public class AccountCardAdapter extends ListAdapter<AccountWithBalance, AccountC
     private final OnAccountCardClickListener listener;
     private final int[] highestAnimatedPosition = {-1};
     private boolean balancesHidden;
+    private boolean animateNextMask;
 
     public AccountCardAdapter(OnAccountCardClickListener listener) {
         super(DIFF_CALLBACK);
@@ -48,6 +49,9 @@ public class AccountCardAdapter extends ListAdapter<AccountWithBalance, AccountC
     public void setBalancesHidden(boolean hidden) {
         if (balancesHidden != hidden) {
             balancesHidden = hidden;
+            // Only the hide direction gets the progressive digit-mask animation; the
+            // rebind this triggers consumes the flag per card.
+            animateNextMask = hidden;
             notifyItemRangeChanged(0, getItemCount());
         }
     }
@@ -61,8 +65,11 @@ public class AccountCardAdapter extends ListAdapter<AccountWithBalance, AccountC
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position), listener, balancesHidden);
+        holder.bind(getItem(position), listener, balancesHidden, animateNextMask);
         ViewAnimations.animateItemEntranceOnce(holder.itemView, position, highestAnimatedPosition);
+        if (position == getItemCount() - 1) {
+            animateNextMask = false;
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -80,7 +87,8 @@ public class AccountCardAdapter extends ListAdapter<AccountWithBalance, AccountC
             ViewAnimations.addPressFeedback(itemView);
         }
 
-        void bind(AccountWithBalance item, OnAccountCardClickListener listener, boolean balancesHidden) {
+        void bind(AccountWithBalance item, OnAccountCardClickListener listener, boolean balancesHidden,
+                  boolean animateMask) {
             int color = item.account.getColor() != 0 ? item.account.getColor() : ColorSwatchRow.DEFAULT_COLORS[1];
             GradientDrawable card = (GradientDrawable) itemView.getBackground().mutate();
             card.setColor(color);
@@ -94,8 +102,16 @@ public class AccountCardAdapter extends ListAdapter<AccountWithBalance, AccountC
             textCurrency.setTextColor(onCardMuted);
             textName.setText(DisplayNameResolver.resolve(itemView.getContext(), item.account.getName()));
             textName.setTextColor(onCardMuted);
-            textBalance.setText(balancesHidden ? HIDDEN_BALANCE_TEXT
-                    : CurrencyFormatter.format(item.balance, item.account.getCurrencyCode()));
+            if (balancesHidden) {
+                if (animateMask) {
+                    textBalance.setText(CurrencyFormatter.format(item.balance, item.account.getCurrencyCode()));
+                    ViewAnimations.animateTextMasking(textBalance, HIDDEN_BALANCE_TEXT);
+                } else {
+                    textBalance.setText(HIDDEN_BALANCE_TEXT);
+                }
+            } else {
+                textBalance.setText(CurrencyFormatter.format(item.balance, item.account.getCurrencyCode()));
+            }
             textBalance.setTextColor(onCard);
 
             itemView.setOnClickListener(v -> listener.onAccountCardClick(item));

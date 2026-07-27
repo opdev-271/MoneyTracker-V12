@@ -3,6 +3,7 @@ package com.moneytracker.app.ui.analytics;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -23,6 +24,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.moneytracker.app.R;
 import com.moneytracker.app.data.dao.TransactionDao;
 import com.moneytracker.app.data.entity.Account;
@@ -222,12 +225,15 @@ public class AnalyticsFragment extends Fragment {
     private void setupLineChart() {
         binding.lineChart.getDescription().setEnabled(false);
         binding.lineChart.getLegend().setEnabled(false);
-        // Touch stays on, but only to scrub the marker/highlight in place - panning and
-        // pinch/double-tap zoom are all off since this is a small embedded overview chart.
+        // Touch stays on, but only to scrub the marker/highlight in place - zoom is
+        // off since this is a small embedded overview chart. dragEnabled must be TRUE
+        // even though we never pan: in MPAndroidChart 3.1.0 the highlight-per-drag
+        // branch sits inside the isDragEnabled() gate, and with the chart fully
+        // zoomed out the drag routes to highlight scrubbing instead of panning.
         binding.lineChart.setTouchEnabled(true);
         binding.lineChart.setHighlightPerDragEnabled(true);
         binding.lineChart.setHighlightPerTapEnabled(true);
-        binding.lineChart.setDragEnabled(false);
+        binding.lineChart.setDragEnabled(true);
         binding.lineChart.setScaleEnabled(false);
         binding.lineChart.setPinchZoom(false);
         binding.lineChart.setDoubleTapToZoomEnabled(false);
@@ -237,6 +243,47 @@ public class AnalyticsFragment extends Fragment {
         markerView = new ChartMarkerView(requireContext());
         markerView.setChartView(binding.lineChart);
         binding.lineChart.setMarker(markerView);
+        // The chart lives inside a NestedScrollView - keep it from stealing the
+        // gesture as soon as the scrubbing finger drifts vertically.
+        binding.lineChart.setOnChartGestureListener(new OnChartGestureListener() {
+            @Override
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+                if (binding.lineChart.getParent() != null) {
+                    binding.lineChart.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+            }
+
+            @Override
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+                if (binding != null && binding.lineChart.getParent() != null) {
+                    binding.lineChart.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+            }
+
+            @Override
+            public void onChartLongPressed(MotionEvent me) {
+            }
+
+            @Override
+            public void onChartDoubleTapped(MotionEvent me) {
+            }
+
+            @Override
+            public void onChartSingleTapped(MotionEvent me) {
+            }
+
+            @Override
+            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+            }
+
+            @Override
+            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+            }
+
+            @Override
+            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+            }
+        });
         XAxis xAxis = binding.lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);

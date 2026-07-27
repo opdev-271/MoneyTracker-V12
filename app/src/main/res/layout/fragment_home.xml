@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- Top bar: two-line greeting + avatar -->
@@ -229,6 +229,7 @@
             android:id="@+id/section_accounts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
             android:orientation="vertical">
 
             <LinearLayout
@@ -263,11 +264,17 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Fixed height (= the fixed 132dp card height): wrap_content here measured
+                 0 on first pass (async ListAdapter diff inside a NestedScrollView) and
+                 the relayout didn't always propagate, clipping the card icons until
+                 something forced a remeasure. clipChildren lets the entrance animation's
+                 vertical offset draw outside these bounds instead of cutting cards off. -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_account_cards"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="132dp"
                 android:layout_marginTop="12dp"
+                android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/screen_padding"
@@ -277,11 +284,13 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto" />
         </LinearLayout>
 
-        <!-- Latest transactions sheet -->
+        <!-- Latest transactions sheet: 0dp + weight so it always runs to the bottom
+             of the viewport instead of ending mid-screen. -->
         <LinearLayout
             android:id="@+id/sheet_transactions"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="@dimen/spacing_l"
             android:background="@drawable/bg_sheet"
             android:elevation="4dp"

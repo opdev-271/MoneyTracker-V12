@@ -1,9 +1,11 @@
 package com.moneytracker.app.util;
 
+import android.animation.ValueAnimator;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 
 /**
  * Small, reusable motion touches shared across screens so the app feels consistently
@@ -87,6 +89,43 @@ public class ViewAnimations {
                 .setDuration(260)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
+    }
+
+    /**
+     * Progressively masks the TextView's current text left-to-right with {@code •}
+     * (spaces are kept as visual anchors), then snaps to {@code finalMask} — used when
+     * hiding balances so the digits visibly dissolve instead of vanishing at once.
+     * Cancels cleanly if the view detaches mid-animation.
+     */
+    public static void animateTextMasking(TextView textView, String finalMask) {
+        CharSequence current = textView.getText();
+        if (!animationsEnabled(textView) || current == null || current.length() == 0) {
+            textView.setText(finalMask);
+            return;
+        }
+        String original = current.toString();
+        int length = original.length();
+        ValueAnimator animator = ValueAnimator.ofInt(0, length);
+        animator.setDuration(450);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.addUpdateListener(animation -> {
+            if (!textView.isAttachedToWindow()) {
+                animation.cancel();
+                return;
+            }
+            int maskedCount = (int) animation.getAnimatedValue();
+            if (maskedCount >= length) {
+                textView.setText(finalMask);
+                return;
+            }
+            StringBuilder sb = new StringBuilder(length);
+            for (int i = 0; i < length; i++) {
+                char c = original.charAt(i);
+                sb.append(i < maskedCount && c != ' ' && c != '\u00A0' ? '•' : c);
+            }
+            textView.setText(sb);
+        });
+        animator.start();
     }
 
     private static boolean animationsEnabled(View view) {
